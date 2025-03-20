@@ -1,0 +1,45 @@
+# Virtual environments
+venv/
+env/
+.env/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.ruff_cache/
+
+# Downloaded files and data
+downloaded_files/
+
+# Git
+.git/
+.gitignore
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Docker files (no need to copy these)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Local development configuration
+.env
+.env.local 

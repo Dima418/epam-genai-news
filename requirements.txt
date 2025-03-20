@@ -1,0 +1,8 @@
+pydantic==2.10.6
+pydantic-settings==2.8.1
+pydantic_core==2.27.2
+python-dotenv==1.0.0
+seleniumbase==4.35.7
+pinecone==6.0.2
+sentence-transformers==3.4.1
+loguru==0.7.3
