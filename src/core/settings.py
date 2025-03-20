@@ -16,7 +16,6 @@ class APIKeys(BaseSettings):
     Contains API keys required for external services.
     """
     GROQ_API_KEY: str
-    OPENAI_API_KEY: str
     PINECONE_API_KEY: str
 
     model_config = SettingsConfigDict(
@@ -74,6 +73,9 @@ class BaseConfig(BaseSettings):
 
     HOST: str = "localhost"
     PORT: int = 8000
+
+    IS_LIMITED: bool = False
+    ITEMS_LIMIT: int = 5
 
 
 class Settings(BaseSettings):
