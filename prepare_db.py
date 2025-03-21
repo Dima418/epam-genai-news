@@ -46,6 +46,8 @@ async def fill_db():
                 processed_ids=processed_ids,
             )
 
+            logger.debug(f"Article data: {article_data}")
+
             if not article_data:
                 fails_in_a_row += 1
 

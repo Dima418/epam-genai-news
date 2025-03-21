@@ -70,6 +70,18 @@ class PineconeDB:
         )
         return self._pc.Index(self._index_name)
 
+    @staticmethod
+    def _remove_none_values(data: dict[str, Any]) -> dict[str, Any]:
+        """Remove None values from a dictionary.
+
+        Args:
+            data (dict[str, Any]): Input dictionary
+
+        Returns:
+            dict[str, Any]: Dictionary with None values removed
+        """
+        return {k: v for k, v in data.items() if v is not None}
+
     def get_embeddings(self, data_input: str | list[str]) -> list[dict[str, Any]]:
         """Generate embeddings for input text.
 
@@ -97,6 +109,9 @@ class PineconeDB:
             time.sleep(1)
         else:
             raise PineconeDBError("Index is not ready after 10 seconds")
+
+        if isinstance(upsert_data, dict) and "metadata" in upsert_data.keys():
+            upsert_data["metadata"] = self._remove_none_values(upsert_data["metadata"])
 
         try:
             self._pci.upsert(

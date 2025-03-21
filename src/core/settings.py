@@ -4,6 +4,7 @@ This module contains all configuration settings for the application,
 including API keys, browser configurations, database settings, and more.
 """
 import os
+from datetime import datetime
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -15,8 +16,8 @@ class APIKeys(BaseSettings):
     
     Contains API keys required for external services.
     """
-    GROQ_API_KEY: str
-    PINECONE_API_KEY: str
+    GROQ_API_KEY: str | None = None
+    PINECONE_API_KEY: str | None = None
 
     model_config = SettingsConfigDict(
         case_sensitive=True,
@@ -57,10 +58,18 @@ class LLMConfig(BaseSettings):
         "The `summary` should be a concise representation of the article's content, "
         "and the `topics` should be a list of key themes or subjects covered in the article. "
         "The `summary` should be no more than 2 sentences long."
-        "The `topics` should be a list of 1-3 items and consist of 1-2 words, where 1 word is more preferable.\n\n"
-        "You must only cover the main part of the article, and not include any additional information or opinions "
-        "or any `relevant` articles that can be present alongside the article page. "
-        "Do not go deeper than the main article content."
+        "The `topics` should be a list of up to 3 most relevant topics. "
+        "The topic must be described using 1 word only. \n\n"
+        "The `content` should be a complete and full representation of the whole article's content. "
+        "Do not go deeper than the main article content. \n\n"
+        "If the article was published recently and you can't find the exact `published_at` date value, there can be "
+        "a message like 'Published `N` hour[s] ago' or 'Published `N` day[s] ago'. "
+        "In this case, you can use the current date and time as the `published_at` value. "
+        f"For the reference, today\'s date is {datetime.now().isoformat()} (ISO format). \n\n"
+        "The `author` field should contain the full name of the author of the article. "
+        "If unable to find the author's name, try to look for the author's name in the article's metadata or " 
+        "somewhere near the publishing date. The author of the article must be always present. \n\n"
+        "All fields are mandatory. If any of the fields are missing, the extraction should be considered as failed."
     )
 
 
@@ -74,7 +83,7 @@ class BaseConfig(BaseSettings):
     HOST: str = "localhost"
     PORT: int = 8000
 
-    IS_LIMITED: bool = False
+    IS_LIMITED: bool = True
     ITEMS_LIMIT: int = 5
 
 
