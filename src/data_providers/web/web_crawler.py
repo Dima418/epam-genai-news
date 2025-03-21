@@ -4,6 +4,7 @@ This module provides functionality to crawl web pages and extract structured dat
 using language models.
 """
 import json
+import uuid
 
 from crawl4ai import AsyncWebCrawler, BrowserConfig, CacheMode, CrawlerRunConfig, LLMConfig, LLMExtractionStrategy
 from loguru import logger
@@ -17,7 +18,7 @@ class CrawlingHelper:
     
     Provides methods to crawl web pages and extract structured data using LLM.
     """
-    def __init__(self, browser_config: BrowserConfig | None = None) -> None:
+    def __init__(self, scrapper, browser_config: BrowserConfig | None = None) -> None:
         """Initialize the CrawlingHelper.
         
         Args:
@@ -25,8 +26,10 @@ class CrawlingHelper:
                 If None, default configuration will be used. Defaults to None.
         """
         logger.info("Initializing CrawlingHelper...")
+        self._scrapper = scrapper
         self._browser_config = browser_config or self.get_default_browser_config()
         self._crawler = AsyncWebCrawler(config=self._browser_config)
+        self._session_id = str(uuid.uuid4())
 
     @staticmethod
     def get_default_browser_config() -> BrowserConfig:
@@ -144,6 +147,21 @@ class CrawlingHelper:
             logger.warning(f"Multiple items found on page {url}")
 
         return complete_items[0]
+
+    async def parse(self, processed_ids: set[str] | None = None) -> dict | None:
+        _processed_ids = set()
+
+        # Combine collections if provided
+        if processed_ids:
+            _processed_ids = _processed_ids | processed_ids
+
+        for url in self._scrapper.articles_urls_generator():
+            yield await self.fetch_and_process_page(
+                url=url,
+                required_keys=NewsArticle.get_properties_names(),
+                session_id=self._session_id,
+                processed_ids=_processed_ids,
+            )
 
     async def start(self) -> AsyncWebCrawler:
         """Start the web crawler.
